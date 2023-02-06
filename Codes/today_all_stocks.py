@@ -52,6 +52,3 @@ def show_table(dataframe):
         root.columnconfigure(i, minsize=max_width[i] * 10)
 
     root.mainloop()
-
-nifty_data, companies_data = getTodayData()
-show_table(nifty_data)
