@@ -1,19 +1,26 @@
 import tkinter as tk
 from jugaad_data.nse import NSELive
-def update_price(symbol):
-    """This code uses the after method of the Tkinter GUI object to schedule a call to update_price every 1000 milliseconds (1 second). The update_price function updates the text of the price_label widget to show the latest price.
-    """
-    n = NSELive()
-    q = n.stock_quote("HDFC")
-    price_label.config(text=f"Price: {q['priceInfo']['lastPrice']}")
-    root.after(1000, update_price)
+
+n = NSELive()
+
+def show_data():
+    company = entry.get()
+    q = n.stock_quote(company)
+    label['text'] = f"{company}: {q['priceInfo']['lastPrice']}"
 
 root = tk.Tk()
-root.title("HDFC Stock Price")
+root.title("Stock Price Info")
 
-price_label = tk.Label(root, text="", font=("TkDefaultFont", 24))
-price_label.pack()
+label = tk.Label(root, text="Enter a company name and press the button", font=("Helvetica", 16))
+label.pack()
 
+entry = tk.Entry(root, font=("Helvetica", 16))
+entry.pack()
 
+button = tk.Button(root, text="Get Stock Info", command=show_data)
+button.pack()
+
+watchlist = tk.Listbox(root)
+watchlist.pack()
 
 root.mainloop()
