@@ -79,5 +79,5 @@ class Intra_Day:
         return timestamp, data
 
 
-# ID = Intra_Day('NIFTY 50')
-# timeStamp, dataPoints = ID.nifty_intraDay()
+ID = Intra_Day('NIFTY 50')
+timeStamp, dataPoints = ID.nifty_intraDay()
