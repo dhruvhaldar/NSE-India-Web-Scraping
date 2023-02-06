@@ -1,26 +1,37 @@
 import tkinter as tk
+from tkinter import ttk
 from jugaad_data.nse import NSELive
+import time
 
-n = NSELive()
-
-def show_data():
-    company = entry.get()
-    q = n.stock_quote(company)
-    label['text'] = f"{company}: {q['priceInfo']['lastPrice']}"
+def show_data(ticker):
+    n = NSELive()
+    wait_label.pack(side='top', fill='x')
+    while True:
+        try:
+            q = n.stock_quote(ticker)
+            price_label.config(text="Price: Rs " + str(q['priceInfo']['lastPrice']))
+            break
+        except:
+            time.sleep(1)
+    wait_label.pack_forget()
 
 root = tk.Tk()
-root.title("Stock Price Info")
+root.title("Stock Ticker")
 
-label = tk.Label(root, text="Enter a company name and press the button", font=("Helvetica", 16))
-label.pack()
+frame = ttk.Frame(root)
+frame.pack(side='top', fill='both', expand=True)
 
-entry = tk.Entry(root, font=("Helvetica", 16))
-entry.pack()
+price_label = ttk.Label(frame)
+price_label.pack(side='top', fill='x')
 
-button = tk.Button(root, text="Get Stock Info", command=show_data)
-button.pack()
+wait_label = ttk.Label(frame, text="Waiting for data...")
 
-watchlist = tk.Listbox(root)
-watchlist.pack()
+ticker = tk.StringVar()
+ticker_entry = ttk.Entry(frame, textvariable=ticker)
+ticker_entry.pack(side='top', fill='x', padx=10, pady=10)
+
+search_button = ttk.Button(frame, text="Search", command=lambda: show_data(ticker.get()))
+search_button.pack(side='top', padx=10, pady=10)
 
 root.mainloop()
+
