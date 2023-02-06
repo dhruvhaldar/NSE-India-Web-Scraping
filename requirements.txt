@@ -3,3 +3,4 @@ html5lib==1.1
 numpy==1.20.2
 pandas==1.2.4
 requests==2.25.1
+jugaad_data
