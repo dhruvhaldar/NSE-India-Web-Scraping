@@ -7,15 +7,19 @@ head = {
                   "Chrome/87.0.4280.88 Safari/537.36 "
 }
 
-
 def getId(name):
     search_url = 'https://www.nseindia.com/api/search/autocomplete?q={}'
     get_details = 'https://www.nseindia.com/api/quote-equity?symbol={}'
     session.get('https://www.nseindia.com/', headers=head)
     search_results = session.get(url=search_url.format(name), headers=head)
-    search_result = search_results.json()['symbols'][0]['symbol']
+    search_result = search_results.json().get('symbols', [])
+    if not search_result:
+        return {
+            print("Could't find it")
+            }
+    symbol = search_result[0]['symbol']
 
-    company_details = session.get(url=get_details.format(search_result), headers=head)
+    company_details = session.get(url=get_details.format(symbol), headers=head)
     return company_details.json()['info']['identifier']
 
-# getId('tata motors') => TATAMOTORSEQN
+getId('TATAMOTORSEQN')
