@@ -37,12 +37,19 @@ def show_table(dataframe):
     root = tk.Tk()
     root.title("Data")
 
+    max_width = {}
     for i, col_name in enumerate(dataframe.columns):
-        tk.Label(root, text=col_name, relief="solid", width=10).grid(row=0, column=i)
+        tk.Label(root, text=col_name, relief="solid").grid(row=0, column=i+1)
+        max_width[i] = len(str(col_name))
 
     for j, row in dataframe.iterrows():
         for i, col_value in enumerate(row):
-            tk.Label(root, text=col_value, relief="solid", width=10).grid(row=j+1, column=i)
+            tk.Label(root, text=col_value).grid(row=j+1, column=i)
+            if len(str(col_value)) > max_width[i]:
+                max_width[i] = len(str(col_value))
+
+    for i in range(len(max_width)):
+        root.columnconfigure(i, minsize=max_width[i] * 10)
 
     root.mainloop()
 
