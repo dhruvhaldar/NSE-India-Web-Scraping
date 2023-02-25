@@ -1,5 +1,5 @@
-from email.feedparser import FeedParser
 import tkinter as tk
+from tkinter import ttk
 import webbrowser
 import feedparser
 
@@ -23,6 +23,13 @@ class NewsAggregator:
         self.tickers_entry = tk.Entry(master)
         self.tickers_entry.pack()
         
+        # Create ticker selection drop-down box
+        self.ticker_options = ["AAPL", "GOOGL", "TSLA", "AMZN", "FB"]
+        self.ticker_label = tk.Label(master, text="Select a stock ticker:")
+        self.ticker_label.pack()
+        self.ticker_combobox = ttk.Combobox(master, values=self.ticker_options)
+        self.ticker_combobox.pack()
+        
         # Create filter input box
         self.filter_label = tk.Label(master, text="Enter keywords to filter (separated by commas):")
         self.filter_label.pack()
@@ -35,35 +42,46 @@ class NewsAggregator:
         
         # Create news listbox
         self.news_listbox = tk.Listbox(master)
-        self.news_listbox.pack(fill=tk.BOTH, expand=True)
-    
+        self.news_listbox.pack()
+        self.news_listbox.bind("<Double-Button-1>", self.open_link)
+        
     def fetch_news(self):
-        # Clear existing news items
-        self.news_listbox.delete(0, tk.END)
+        # Get tickers from input box or selection drop-down
+        tickers = self.tickers_entry.get()
+        if not tickers:
+            tickers = self.ticker_combobox.get()
+        if not tickers:
+            return
         
-        # Get tickers and filter keywords from input boxes
-        tickers = self.tickers_entry.get().split(",")
-        filters = self.filter_entry.get().split(",")
+        # Get filter keywords from input box
+        filter_keywords = self.filter_entry.get()
+        if filter_keywords:
+            filter_keywords = filter_keywords.split(",")
+        else:
+            filter_keywords = []
         
-        # Fetch news for each ticker
-        for ticker in tickers:
-            url = f"https://news.google.com/rss/search?q={ticker}+stock&hl=en-US&gl=US&ceid=US:en"
+        # Fetch news articles for each ticker
+        for ticker in tickers.split(","):
+            url = f"https://news.google.com/rss/search?q={ticker}+stock"
             feed = feedparser.parse(url)
-            
-            # Add news items to listbox
             for entry in feed.entries:
-                if any(filter.lower() in entry.title.lower() for filter in filters):
+                title = entry.title
+                link = entry.link
+                summary = entry.summary
+                # Check if any filter keyword is present in the article
+                if any(keyword.strip().lower() in summary.lower() for keyword in filter_keywords):
                     continue
-                self.news_listbox.insert(tk.END, entry.title)
-                self.news_listbox.itemconfig(tk.END, foreground="blue", cursor="hand2")
-                self.news_listbox.bind("<Double-Button-1>", self.open_link)
-    
+                # Create clickable news link
+                label = tk.Label(self.master, text=title, fg="blue", cursor="hand2")
+                label.pack()
+                label.bind("<Button-1>", lambda e: webbrowser.open_new(link))
+                
     def open_link(self, event):
-        # Open selected news item in default web browser
-        index = self.news_listbox.curselection()[0]
-        url = "https://news.google.com" + FeedParser.entries[index].link[1:]
-        webbrowser.open(url)
+        # Open link in default web browser when double-clicked
+        selection = self.news_listbox.curselection()
+        link = news[selection[0]][1]
+        webbrowser.open_new_tab(link)
 
 root = tk.Tk()
-app = NewsAggregator(root)
+my_aggregator = NewsAggregator(root)
 root.mainloop()
