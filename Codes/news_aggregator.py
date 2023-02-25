@@ -40,9 +40,14 @@ class NewsAggregator:
         self.fetch_button = tk.Button(master, text="Fetch News", command=self.fetch_news)
         self.fetch_button.pack()
         
-        # Create news listbox
-        self.news_listbox = tk.Listbox(master)
-        self.news_listbox.pack()
+    # Create news listbox
+        self.news_frame = tk.Frame(master)
+        self.news_frame.pack(fill=tk.BOTH, expand=True)
+        self.news_scrollbar = tk.Scrollbar(self.news_frame)
+        self.news_scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+        self.news_listbox = tk.Listbox(self.news_frame, yscrollcommand=self.news_scrollbar.set)
+        self.news_listbox.pack(fill=tk.BOTH, expand=True)
+        self.news_scrollbar.config(command=self.news_listbox.yview)
         self.news_listbox.bind("<Double-Button-1>", self.open_link)
         
     def fetch_news(self):
