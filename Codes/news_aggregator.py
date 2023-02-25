@@ -14,5 +14,7 @@ news_articles = soup.find_all('div', {'class': 'dbsr'})
 for article in news_articles:
     title = article.find('div', {'class': 'JheGif nDgy9d'}).get_text()
     link = article.find('a')['href']
-    print("Title: {title}")
-    print("Link: {link}\n")
+    print(title)
+    print(link)
+    #print("Title: {title}")
+    #print("Link: {link}\n")
